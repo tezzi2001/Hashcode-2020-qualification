@@ -1,42 +1,46 @@
 package io.input;
 
-import io.input.InputData;
+import io.input.domain.Book;
+import io.input.domain.Data;
+import io.input.domain.Library;
+import lombok.experimental.UtilityClass;
 
-import java.io.DataInput;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+@UtilityClass
 public class InputManager {
-    String name;
 
-    public InputData scan() {
-        try (Scanner scanner = new Scanner(new File(InputData.class.getProtectionDomain().getClassLoader().getResource(name).getFile()))) {
-            int books = scanner.nextInt();
-            int lib = scanner.nextInt();
+    public Data scan(String name) {
+        try (Scanner scanner = new Scanner(new File(Data.class.getProtectionDomain().getClassLoader().getResource(name).getFile()))) {
+            int booksNum = scanner.nextInt();
+            int libsNum = scanner.nextInt();
             int days = scanner.nextInt();
 
-            int[] scoreBooks = new int[books];
-            for (int i = 0; i < books; i++) {
-                scoreBooks[i] = scanner.nextInt();
+            Book[] books = new Book[booksNum];
+
+            for (int i = 0; i < booksNum; i++) {
+                books[i] = new Book(i, scanner.nextInt());
             }
-            int countBooks = 0;
-            int signUp = 0;
-            int booksPerDay = 0;
 
-            int[] id = new int[0];
-            for (int j = 0; j < lib; j++) {
-                countBooks = scanner.nextInt();
-                signUp = scanner.nextInt();
-                booksPerDay = scanner.nextInt();
+            Library[] libraries = new Library[libsNum];
 
-                id = new int[countBooks];
-                for (int k = 0; k < countBooks; k++) {
-                    id[k] = scanner.nextInt();
+            for (int i = 0; i < libsNum; i++) {
+                int localBooksNum = scanner.nextInt();
+                Library library = new Library(null, scanner.nextInt(), scanner.nextInt());
+                Book[] localBooks = new Book[localBooksNum];
+
+                for (int j = 0; j < localBooksNum; j++) {
+                    int id = scanner.nextInt();
+                    localBooks[j] = new Book(id, books[id].getScore());
+                    System.err.println(localBooks[j]);
                 }
-            }
 
-            return new InputData(books, lib, days, scoreBooks, countBooks, signUp, booksPerDay, id);
+                library.setBooks(localBooks);
+                libraries[i] = library;
+            }
+            return  new Data(days, libraries, books, booksNum);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

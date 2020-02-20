@@ -3,9 +3,10 @@ package io.output;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.Map;
+
 @AllArgsConstructor
 @Data
 public class OutputForm {
-    private int[] libsOrderIndexes;
-    private int[] booksIndexesInOrder;
+    Map<Integer, int[]> output;
 }
